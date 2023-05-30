@@ -1,6 +1,17 @@
 #READING AND UNDERSTANDING QR CODE
-import cv2
+import cv2, os
 from pyzbar.pyzbar import decode
+from matplotlib import pyplot as plt
+from _tkinter import *
+import pyttsx3
+import time
+import numpy as np
+
+from keras.models import Sequential
+from keras.layers import Dense,Activation,Flatten,Dropout
+from keras.layers import Conv2D,MaxPooling2D
+from keras.callbacks import ModelCheckpoint
+from sklearn.model_selection import train_test_split
 
 capture = cv2.videocapture(0)  #DEFAULT CAMERA
 
@@ -18,8 +29,7 @@ while True:
 
 #to read out text
 
-from _tkinter import *
-import pyttsx3
+
 
 engine = pyttsx3.init()
 engine.say(NETDATA)
@@ -27,7 +37,7 @@ engine.say(NETDATA)
 engine.runAndWait()
 
 #FOR CAPTURING EMERGENCY PIC AND SAVING
-import time
+
 emergencypic = cv2.videocapture(0)
 
 a = 0
@@ -39,7 +49,7 @@ while True :
     if key == ord("EMERGENCY BUTTON")  #THE SECOND RED BUTTON
 
 #FACEMASK RECOGNITON
- import cv2, os
+
 
         data_path = 'dataset'
         categories = os.listdir(data_path)
@@ -71,22 +81,16 @@ for category in categories:
         data.append(resized)
         target.append(label_dict[category])
 
-import numpy as np
+
 
 data = np.array(data) / 255.0
 data = np.reshape(data, (data.shape[0], img_size, img_size, 1))
 target = np.array(target)
 
-import numpy as np
-
 data=np.load('data.npy')
 target=np.load('target.npy')
 
 #NEURAL NETWORK
-from keras.models import Sequential
-from keras.layers import Dense,Activation,Flatten,Dropout
-from keras.layers import Conv2D,MaxPooling2D
-from keras.callbacks import ModelCheckpoint
 
 model=Sequential()
 
@@ -109,7 +113,7 @@ model.add(Dense(2,activation='softmax'))
 #The Final layer with two outputs for two categories
 
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-from sklearn.model_selection import train_test_split
+
  #TRAINING WITH THE DATA
 train_data,test_data,train_target,test_target=train_test_split(data,target,test_size=0.1)
 checkpoint = ModelCheckpoint('model-{epoch:03d}.model',monitor='val_loss',verbose=0,save_best_only=True,mode='auto')
@@ -157,7 +161,6 @@ Epoch 20/20
 990/990 [==============================] - 94s 95ms/step - loss: 0.0358 - accuracy: 0.9899 - val_loss: 0.1575 - val_accuracy: 0.9476
 
 #PLOTTING THE NEURAL THE DATA OF ACCURACY FROM TRAING LOSS DATA STRUCTURE
-from matplotlib import pyplot as plt
 plt.plot(history.history['loss'],'r',label='training loss')
 plt.plot(history.history['val_loss'],label='validation loss')
 plt.xlabel('# epochs')
